@@ -1,10 +1,29 @@
 package com.example.newsly.presentation.screen.newslist
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.newsly.R
+import com.example.newsly.domain.entity.News
+import com.example.newsly.domain.usecase.FetchNewsUseCase
+import com.example.newsly.presentation.util.ViewState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewsListViewModel(context: Application): AndroidViewModel(context) {
+@HiltViewModel
+class NewsListViewModel @Inject constructor(
+    @ApplicationContext val context: Context,
+    val fetchNewsUseCase: FetchNewsUseCase
+): ViewModel() {
+
+    private val _viewState = MutableStateFlow<ViewState<List<News>>>(ViewState.Loading)
+    val viewState: StateFlow<ViewState<List<News>>> = _viewState
 
     private val categories = listOf(
         context.getString(R.string.business),
@@ -16,4 +35,26 @@ class NewsListViewModel(context: Application): AndroidViewModel(context) {
     )
 
     fun getCategories() : List<String> = categories
+
+    fun getNews(category: String) {
+        viewModelScope.launch {
+            fetchNewsUseCase(category)
+                .onStart {
+                    _viewState.value = ViewState.Loading
+                }
+                .catch {
+                    _viewState.value = ViewState.Failure(context.getString(R.string.no_news))
+                }
+                .collect { news ->
+                    val filteredNews = removeDeletedNews(news)
+                    _viewState.value = ViewState.Success(filteredNews)
+                }
+        }
+    }
+
+    private fun removeDeletedNews(news: List<News>) : List<News> {
+        return news.filter {
+            it.title != "[Removed]"
+        }
+    }
 }
