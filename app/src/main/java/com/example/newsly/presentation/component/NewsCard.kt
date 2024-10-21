@@ -19,7 +19,6 @@ import com.example.newsly.domain.entity.News
 
 @Composable
 fun NewsCard(news: News) {
-
     Column(
         modifier = Modifier.padding(16.dp)
     ) {

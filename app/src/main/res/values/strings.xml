@@ -8,4 +8,8 @@
     <string name="technology">Technology</string>
     <string name="news">NEWS</string>
     <string name="source">Source</string>
+    <string name="no_news">No news found</string>
+    <string name="no_title">Without title</string>
+    <string name="no_description">Without description</string>
+    <string name="no_source">Unknown source</string>
 </resources>
