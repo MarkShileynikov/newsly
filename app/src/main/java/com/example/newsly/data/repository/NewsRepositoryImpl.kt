@@ -4,28 +4,39 @@ import android.content.Context
 import com.example.newsly.R
 import com.example.newsly.data.api.NetworkClientConfig
 import com.example.newsly.data.api.NewsApiService
+import com.example.newsly.data.api.util.doCall
+import com.example.newsly.data.response.toNewsList
+import com.example.newsly.data.util.isConnectedToNetwork
 import com.example.newsly.domain.entity.News
 import com.example.newsly.domain.repository.NewsRepository
+import com.example.newsly.domain.util.Event
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class NewsRepositoryImpl @Inject constructor(
     private val newsApiService: NewsApiService,
     @ApplicationContext private val context: Context
 ): NewsRepository {
-    override suspend fun fetchNews(category: String): Flow<List<News>> = flow {
-        val response = newsApiService.fetchNews(NetworkClientConfig.API_KEY, category)
-        emit(response)
-    }.map { responses ->
-        responses.articles.map { response ->
-            News(
-                title = response.title ?: context.getString(R.string.no_title),
-                description = response.description ?: context.getString(R.string.no_description),
-                source = response.source.name ?: context.getString(R.string.no_source)
-            )
+    override suspend fun fetchNews(category: String): Event<List<News>> {
+
+        if (!isConnectedToNetwork(context)) {
+            return Event.Failure(context.getString(R.string.no_internet))
+        }
+
+        val event = doCall {
+            return@doCall newsApiService.fetchNews(NetworkClientConfig.API_KEY, category)
+        }
+
+        return when(event) {
+            is Event.Success -> {
+                val response = event.data
+                val news = response.toNewsList(context)
+                Event.Success(news)
+            }
+            is Event.Failure -> {
+                val error = event.exception
+                Event.Failure(error)
+            }
         }
     }
 }

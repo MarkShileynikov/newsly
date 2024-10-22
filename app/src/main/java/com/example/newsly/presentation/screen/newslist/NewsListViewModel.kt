@@ -43,11 +43,15 @@ class NewsListViewModel @Inject constructor(
                     _viewState.value = ViewState.Loading
                 }
                 .catch {
-                    _viewState.value = ViewState.Failure(context.getString(R.string.no_news))
+                    _viewState.value = ViewState.Failure(it.message ?: context.getString(R.string.no_news))
                 }
                 .collect { news ->
-                    val filteredNews = removeDeletedNews(news)
-                    _viewState.value = ViewState.Success(filteredNews)
+                    if (news.isEmpty()) {
+                        _viewState.value = ViewState.Failure(context.getString(R.string.no_news))
+                    } else {
+                        val filteredNews = removeDeletedNews(news)
+                        _viewState.value = ViewState.Success(filteredNews)
+                    }
                 }
         }
     }
