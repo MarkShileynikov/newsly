@@ -1,6 +1,7 @@
 package com.example.newsly.data.api
 
-import com.example.newsly.data.response.NewsApiResponse
+import com.example.newsly.data.response.NewsResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -10,5 +11,5 @@ interface NewsApiService {
     suspend fun fetchNews(
         @Query("apiKey") apiKey: String,
         @Query("category") category: String
-    ) : NewsApiResponse
+    ) : Response<NewsResponse>
 }
