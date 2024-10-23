@@ -22,4 +22,5 @@
     <string name="bookmark_error">Failed to get bookmarks</string>
     <string name="no_bookmarks">You haven\'t added any bookmarks yet</string>
     <string name="bookmarks">Bookmarks</string>
+    <string name="no_article">Failed to get article</string>
 </resources>

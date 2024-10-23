@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -16,6 +17,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.newsly.presentation.screen.bookmark.BookmarksScreen
+import com.example.newsly.presentation.screen.bookmarkdetail.BookmarkDetailScreen
 import com.example.newsly.presentation.screen.newsdetail.NewsDetailScreen
 import com.example.newsly.presentation.screen.newslist.NewsListScreen
 
@@ -25,14 +27,19 @@ fun SetNavigation() {
     var showBottomNavigation by rememberSaveable {
         mutableStateOf(true)
     }
+    var selectedItemIndex = rememberSaveable {
+        mutableIntStateOf(0)
+    }
 
     Scaffold(
         bottomBar = {
             if (showBottomNavigation) {
-                BottomNavigation(navController = navController)
+                BottomNavigation(
+                    navController = navController,
+                    selectedItemIndex = selectedItemIndex)
             }
         }
-    ) { innerPadding -> // Получаем отступы от Scaffold
+    ) { innerPadding ->
         NavHost(navController = navController,
             route = "root",
             startDestination = "home"
@@ -42,7 +49,7 @@ fun SetNavigation() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding) // Добавляем отступ снизу
+                        .padding(innerPadding)
                 ) {
                     NewsListScreen(navController)
                 }
@@ -52,7 +59,7 @@ fun SetNavigation() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(innerPadding) // Добавляем отступ снизу
+                        .padding(innerPadding)
                 ) {
                     BookmarksScreen(navController)
                 }
@@ -74,6 +81,20 @@ fun SetNavigation() {
                 val title = backStackEntry.arguments?.getString("title") ?: ""
                 val category = backStackEntry.arguments?.getString("category") ?: ""
                 NewsDetailScreen(title = title, category = category, navController = navController)
+            }
+            composable(
+                route = "bookmark_detailed/{id}",
+                arguments = listOf(
+                    navArgument("id") {
+                        type = NavType.IntType
+                        defaultValue = -1
+                    }
+                )
+            ) { backStackEntry ->
+                selectedItemIndex.intValue = 1
+                showBottomNavigation = false
+                val id = backStackEntry.arguments?.getInt("id") ?: -1
+                BookmarkDetailScreen(navController = navController, id = id)
             }
         }
     }

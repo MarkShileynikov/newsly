@@ -26,14 +26,14 @@ class NewsDetailViewModel @Inject constructor(
     private val fetchFullNewsUseCase: FetchFullNewsUseCase,
     private val addBookmarkUseCase: AddBookmarkUseCase,
     private val bookmarkCheckUseCase: BookmarkCheckUseCase,
-    private val deleteBookmarkUseCase: DeleteBookmarkUseCase
+    private val deleteBookmarkUseCase: DeleteBookmarkUseCase,
 ) : ViewModel() {
 
     private val _viewState = MutableStateFlow<ViewState<NewsDetails>>(ViewState.Loading)
     val viewState : StateFlow<ViewState<NewsDetails>> = _viewState
 
-    private val _bookmarkState = MutableStateFlow(false)
-    val bookmarkState : StateFlow<Boolean> = _bookmarkState
+    private val _isBookmarkState = MutableStateFlow(false)
+    val isBookmarkState : StateFlow<Boolean> = _isBookmarkState
 
     fun getNewsDetails(category: String, title: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -51,7 +51,7 @@ class NewsDetailViewModel @Inject constructor(
     }
 
     fun addBookMark(news: NewsDetails) {
-        _bookmarkState.value = true
+        _isBookmarkState.value = true
         viewModelScope.launch(Dispatchers.IO) {
             addBookmarkUseCase(news)
         }
@@ -61,16 +61,16 @@ class NewsDetailViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             bookmarkCheckUseCase(title)
                 .catch {
-                    _bookmarkState.value = false
+                    _isBookmarkState.value = false
                 }
                 .collect { isBookmark ->
-                    _bookmarkState.value = isBookmark
+                    _isBookmarkState.value = isBookmark
                 }
         }
     }
 
     fun deleteBookmark(title: String) {
-        _bookmarkState.value = false
+        _isBookmarkState.value = false
         viewModelScope.launch {
             deleteBookmarkUseCase(title)
         }
