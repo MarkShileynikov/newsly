@@ -1,6 +1,6 @@
 package com.example.newsly.domain.usecase
 
-import com.example.newsly.domain.entity.FullNews
+import com.example.newsly.domain.entity.NewsDetails
 import com.example.newsly.domain.repository.NewsRepository
 import com.example.newsly.domain.util.Event
 import kotlinx.coroutines.flow.Flow
@@ -12,7 +12,7 @@ import javax.inject.Inject
 class FetchFullNewsUseCase @Inject constructor(
     private val newsRepository: NewsRepository
 ) {
-    suspend operator fun invoke(category: String, title: String) : Flow<FullNews> = flow {
+    suspend operator fun invoke(category: String, title: String) : Flow<NewsDetails> = flow {
 
         val event = newsRepository.fetchFullNews(category, title)
 

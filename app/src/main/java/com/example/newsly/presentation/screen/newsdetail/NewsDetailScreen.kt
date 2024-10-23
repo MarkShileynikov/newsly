@@ -2,7 +2,6 @@ package com.example.newsly.presentation.screen.newsdetail
 
 import android.content.Intent
 import android.net.Uri
-import android.view.View
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -40,11 +40,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.newsly.R
-import com.example.newsly.domain.entity.FullNews
+import com.example.newsly.domain.entity.NewsDetails
 import com.example.newsly.presentation.util.ViewState
 
 @Composable
@@ -53,14 +52,16 @@ fun NewsDetailScreen(
     category: String,
     navController: NavController
 ) {
+    val context = LocalContext.current
 
     val viewModel : NewsDetailViewModel = hiltViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
-    val context = LocalContext.current
+    val isBookmark by viewModel.bookmarkState.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getNewsDetails(category, title)
+        viewModel.checkIfBookmark(title)
     }
 
     Column(
@@ -68,11 +69,60 @@ fun NewsDetailScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable {
+                    navController.popBackStack()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "back",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(32.dp)
+                )
+
+                Text(
+                    text = stringResource(id = R.string.back),
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+            Icon(
+                imageVector = if (isBookmark) {
+                    Icons.Filled.Favorite
+                } else {
+                    Icons.Outlined.FavoriteBorder
+                },
+                contentDescription = "favorite",
+                tint = Color.Red,
+                modifier = Modifier
+                    .size(28.dp)
+                    .clickable {
+                        if (!isBookmark && viewState is ViewState.Success) {
+                            viewModel.addBookMark((viewState as ViewState.Success<NewsDetails>).data)
+                        } else {
+                            viewModel.deleteBookmark(title)
+                        }
+                    }
+            )
+        }
+
+        HorizontalDivider()
 
         when(viewState) {
             is ViewState.Loading -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(
@@ -84,7 +134,9 @@ fun NewsDetailScreen(
             }
             is ViewState.Failure -> {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -94,44 +146,7 @@ fun NewsDetailScreen(
                 }
             }
             is ViewState.Success -> {
-                val news = (viewState as ViewState.Success<FullNews>).data
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable {
-                            navController.popBackStack()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "back",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(32.dp)
-                        )
-
-                        Text(
-                            text = stringResource(id = R.string.back),
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-
-                    Icon(
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "favorite",
-                        tint = Color.Red,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                HorizontalDivider()
+                val news = (viewState as ViewState.Success<NewsDetails>).data
 
                 Text(
                     text = title,

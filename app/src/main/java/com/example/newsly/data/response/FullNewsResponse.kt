@@ -2,7 +2,7 @@ package com.example.newsly.data.response
 
 import android.content.Context
 import com.example.newsly.R
-import com.example.newsly.domain.entity.FullNews
+import com.example.newsly.domain.entity.NewsDetails
 import com.google.gson.annotations.SerializedName
 
 data class FullNewsResponse(
@@ -18,19 +18,21 @@ data class FullArticle(
     @SerializedName("publishedAt")
     val publicationDate: String?,
     val content: String?,
-    val url: String?
+    val url: String?,
+    val description: String?
 )
 
-fun FullNewsResponse.toFullNews(context: Context): List<FullNews> {
+fun FullNewsResponse.toNewsDetails(context: Context): List<NewsDetails> {
     return articles.map { article -> {}
-        FullNews(
+        NewsDetails(
             source = article.source.name ?: context.getString(R.string.no_source),
             author = article.author ?: context.getString(R.string.no_author),
             title = article.title ?: context.getString(R.string.no_title),
             imageUrl = article.imageUrl ?: "",
             publicationDate = article.publicationDate ?: "",
             content = article.content ?: "",
-            url = article.url ?: ""
+            url = article.url ?: "",
+            description = article.description ?: ""
         )
     }
 
