@@ -18,7 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,16 +28,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.newsly.R
 import com.example.newsly.domain.entity.News
 import com.example.newsly.presentation.component.NewsCard
 import com.example.newsly.presentation.util.ViewState
 
 @Composable
-fun NewsListScreen() {
+fun NewsListScreen(
+    navController: NavController
+) {
 
     val viewModel: NewsListViewModel = hiltViewModel()
-    var selectedTabIndex by remember {
+    var selectedTabIndex by rememberSaveable {
         mutableIntStateOf(0)
     }
 
@@ -58,7 +61,7 @@ fun NewsListScreen() {
             fontSize = 40.sp,
             color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp)
         )
 
         ScrollableTabRow(
@@ -98,7 +101,12 @@ fun NewsListScreen() {
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(newsList) { news ->
-                        NewsCard(news = news)
+                        NewsCard(
+                            news = news,
+                            onClick = {
+                                navController.navigate("news_detailed/${news.title}/${categories[selectedTabIndex]}")
+                            }
+                        )
                     }
                 }
             }
@@ -107,7 +115,10 @@ fun NewsListScreen() {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(text = (viewState as ViewState.Failure).message)
+                    Text(
+                        text = (viewState as ViewState.Failure).message,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }

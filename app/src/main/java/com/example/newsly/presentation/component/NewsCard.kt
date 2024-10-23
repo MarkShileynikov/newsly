@@ -1,5 +1,6 @@
 package com.example.newsly.presentation.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -18,9 +19,16 @@ import com.example.newsly.R
 import com.example.newsly.domain.entity.News
 
 @Composable
-fun NewsCard(news: News) {
+fun NewsCard(
+    news: News,
+    onClick: () -> Unit
+) {
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .padding(16.dp)
+            .clickable {
+                onClick()
+            }
     ) {
         Text(
             text = news.title,

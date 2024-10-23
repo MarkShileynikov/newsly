@@ -17,7 +17,11 @@ class FetchNewsUseCase @Inject constructor(
         when(event) {
             is Event.Success -> {
                 val news = event.data
-                emit(news)
+                emit(
+                    news.filter {
+                        it.title != "[Removed]"
+                    }
+                )
             }
             is Event.Failure -> {
                 throw Exception(event.exception)

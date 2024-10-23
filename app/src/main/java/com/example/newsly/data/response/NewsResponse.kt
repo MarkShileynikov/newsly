@@ -23,7 +23,7 @@ fun NewsResponse.toNewsList(context: Context): List<News> {
         News(
             title = article.title ?: context.getString(R.string.no_title),
             description = article.description ?: context.getString(R.string.no_description),
-            source = article.source.name ?: context.getString(R.string.no_source)
+            source = article.source.name ?: context.getString(R.string.no_source),
         )
     }
 }

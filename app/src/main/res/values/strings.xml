@@ -13,4 +13,10 @@
     <string name="no_description">Without description</string>
     <string name="no_source">Unknown source</string>
     <string name="no_internet">No internet connection</string>
+    <string name="no_author">Unknown author</string>
+    <string name="author">Author</string>
+    <string name="back">Back</string>
+    <string name="published">Published</string>
+    <string name="error">Something went wrong</string>
+    <string name="url">Link to full article</string>
 </resources>
