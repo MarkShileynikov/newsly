@@ -22,5 +22,4 @@ interface BookmarkDao {
 
     @Query("DELETE FROM bookmarks WHERE title = :title")
     suspend fun deleteBookmark(title: String)
-
 }

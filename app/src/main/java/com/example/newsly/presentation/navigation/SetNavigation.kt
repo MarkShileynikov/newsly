@@ -27,7 +27,7 @@ fun SetNavigation() {
     var showBottomNavigation by rememberSaveable {
         mutableStateOf(true)
     }
-    var selectedItemIndex = rememberSaveable {
+    val selectedItemIndex = rememberSaveable {
         mutableIntStateOf(0)
     }
 
@@ -98,5 +98,4 @@ fun SetNavigation() {
             }
         }
     }
-
 }
