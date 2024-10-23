@@ -11,7 +11,7 @@ interface BookmarkDao {
     @Insert
     suspend fun insert(bookmarkDetailedItem: BookmarkDetailedItem)
 
-    @Query("SELECT title, description, source FROM bookmarks")
+    @Query("SELECT id, title, description, source FROM bookmarks")
     suspend fun fetchAllBookmarks(): List<BookmarkItem>
 
     @Query("SELECT * FROM bookmarks WHERE id = :id")

@@ -1,7 +1,8 @@
-package com.example.newsly.presentation.screen.newsdetail
+package com.example.newsly.presentation.screen.bookmarkdetail
 
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,21 +50,25 @@ import com.example.newsly.domain.entity.NewsDetails
 import com.example.newsly.presentation.util.ViewState
 
 @Composable
-fun NewsDetailScreen(
-    title: String,
-    category: String,
-    navController: NavController
+fun BookmarkDetailScreen(
+    navController: NavController,
+    id: Int
 ) {
     val context = LocalContext.current
 
-    val viewModel : NewsDetailViewModel = hiltViewModel()
+    val viewModel : BookmarkDetailViewModel = hiltViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
-    val isBookmark by viewModel.isBookmarkState.collectAsState()
+    var isBookmark by rememberSaveable {
+        mutableStateOf(true)
+    }
 
     LaunchedEffect(Unit) {
-        viewModel.getNewsDetails(category, title)
-        viewModel.checkIfBookmark(title)
+        viewModel.getBookmark(id)
+    }
+
+    BackHandler {
+        navController.navigate("bookmarks")
     }
 
     Column(
@@ -78,7 +86,7 @@ fun NewsDetailScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    navController.popBackStack()
+                    navController.navigate("bookmarks")
                 }
             ) {
                 Icon(
@@ -106,9 +114,11 @@ fun NewsDetailScreen(
                     .size(28.dp)
                     .clickable {
                         if (!isBookmark && viewState is ViewState.Success) {
+                            isBookmark = true
                             viewModel.addBookMark((viewState as ViewState.Success<NewsDetails>).data)
                         } else {
-                            viewModel.deleteBookmark(title)
+                            isBookmark = false
+                            viewModel.deleteBookmark((viewState as ViewState.Success<NewsDetails>).data.title)
                         }
                     }
             )
@@ -148,7 +158,7 @@ fun NewsDetailScreen(
                 val news = (viewState as ViewState.Success<NewsDetails>).data
 
                 Text(
-                    text = title,
+                    text = news.title,
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,

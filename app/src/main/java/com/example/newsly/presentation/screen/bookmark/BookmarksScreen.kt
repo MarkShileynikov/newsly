@@ -80,11 +80,12 @@ fun BookmarksScreen(
                             news = News(
                                 title = bookmark.title,
                                 description = bookmark.description,
-                                source = bookmark.source
-                            )
-                        ) {
-
-                        }
+                                source = bookmark.source,
+                            ),
+                            onClick = {
+                                navController.navigate("bookmark_detailed/${bookmark.id}")
+                            }
+                        )
                     }
                 }
             }
