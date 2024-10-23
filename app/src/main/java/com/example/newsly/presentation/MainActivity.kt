@@ -3,7 +3,7 @@ package com.example.newsly.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.newsly.presentation.screen.newslist.NewsListScreen
+import com.example.newsly.presentation.navigation.SetNavigation
 import com.example.newsly.ui.theme.NewslyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -14,7 +14,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NewslyTheme {
-                NewsListScreen()
+                SetNavigation()
             }
         }
     }

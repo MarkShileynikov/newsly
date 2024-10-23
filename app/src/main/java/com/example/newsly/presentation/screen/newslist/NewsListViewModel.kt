@@ -1,6 +1,7 @@
 package com.example.newsly.presentation.screen.newslist
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsly.R
@@ -49,16 +50,9 @@ class NewsListViewModel @Inject constructor(
                     if (news.isEmpty()) {
                         _viewState.value = ViewState.Failure(context.getString(R.string.no_news))
                     } else {
-                        val filteredNews = removeDeletedNews(news)
-                        _viewState.value = ViewState.Success(filteredNews)
+                        _viewState.value = ViewState.Success(news)
                     }
                 }
-        }
-    }
-
-    private fun removeDeletedNews(news: List<News>) : List<News> {
-        return news.filter {
-            it.title != "[Removed]"
         }
     }
 }
