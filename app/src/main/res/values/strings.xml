@@ -19,4 +19,7 @@
     <string name="published">Published</string>
     <string name="error">Something went wrong</string>
     <string name="url">Link to full article</string>
+    <string name="bookmark_error">Failed to get bookmarks</string>
+    <string name="no_bookmarks">You haven\'t added any bookmarks yet</string>
+    <string name="bookmarks">Bookmarks</string>
 </resources>

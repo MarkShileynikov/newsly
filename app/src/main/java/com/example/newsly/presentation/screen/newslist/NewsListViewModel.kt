@@ -1,7 +1,6 @@
 package com.example.newsly.presentation.screen.newslist
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsly.R
@@ -10,6 +9,7 @@ import com.example.newsly.domain.usecase.FetchNewsUseCase
 import com.example.newsly.presentation.util.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -38,7 +38,7 @@ class NewsListViewModel @Inject constructor(
     fun getCategories() : List<String> = categories
 
     fun getNews(category: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             fetchNewsUseCase(category)
                 .onStart {
                     _viewState.value = ViewState.Loading

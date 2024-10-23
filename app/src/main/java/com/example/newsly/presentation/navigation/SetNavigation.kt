@@ -1,12 +1,10 @@
 package com.example.newsly.presentation.navigation
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -17,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.newsly.presentation.screen.bookmarks.BookmarksScreen
+import com.example.newsly.presentation.screen.bookmark.BookmarksScreen
 import com.example.newsly.presentation.screen.newsdetail.NewsDetailScreen
 import com.example.newsly.presentation.screen.newslist.NewsListScreen
 
@@ -56,7 +54,7 @@ fun SetNavigation() {
                         .fillMaxSize()
                         .padding(innerPadding) // Добавляем отступ снизу
                 ) {
-                    BookmarksScreen()
+                    BookmarksScreen(navController)
                 }
             }
             composable(
