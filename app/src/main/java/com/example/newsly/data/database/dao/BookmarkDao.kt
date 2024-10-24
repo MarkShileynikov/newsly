@@ -14,8 +14,8 @@ interface BookmarkDao {
     @Query("SELECT id, title, description, source FROM bookmarks")
     suspend fun fetchAllBookmarks(): List<BookmarkItem>
 
-    @Query("SELECT * FROM bookmarks WHERE id = :id")
-    suspend fun fetchBookmarkById(id: Int): BookmarkDetailedItem
+    @Query("SELECT * FROM bookmarks WHERE title = :title")
+    suspend fun fetchBookmarkByTitle(title: String): BookmarkDetailedItem
 
     @Query("SELECT COUNT(*) FROM bookmarks WHERE title = :title")
     suspend fun isBookmarkExists(title: String): Int

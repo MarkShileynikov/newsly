@@ -104,7 +104,7 @@ fun NewsListScreen(
                         NewsCard(
                             news = news,
                             onClick = {
-                                navController.navigate("news_detailed/${news.title}/${categories[selectedTabIndex]}")
+                                navController.navigate("news_detailed/${news.title}?category=${categories[selectedTabIndex]}")
                             }
                         )
                     }

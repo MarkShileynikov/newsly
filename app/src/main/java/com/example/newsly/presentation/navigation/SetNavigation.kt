@@ -17,7 +17,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.newsly.presentation.screen.bookmark.BookmarksScreen
-import com.example.newsly.presentation.screen.bookmarkdetail.BookmarkDetailScreen
 import com.example.newsly.presentation.screen.newsdetail.NewsDetailScreen
 import com.example.newsly.presentation.screen.newslist.NewsListScreen
 
@@ -65,7 +64,7 @@ fun SetNavigation() {
                 }
             }
             composable(
-                route = "news_detailed/{title}/{category}",
+                route = "news_detailed/{title}?category={category}",
                 arguments = listOf(
                     navArgument("title") {
                         type = NavType.StringType
@@ -81,20 +80,6 @@ fun SetNavigation() {
                 val title = backStackEntry.arguments?.getString("title") ?: ""
                 val category = backStackEntry.arguments?.getString("category") ?: ""
                 NewsDetailScreen(title = title, category = category, navController = navController)
-            }
-            composable(
-                route = "bookmark_detailed/{id}",
-                arguments = listOf(
-                    navArgument("id") {
-                        type = NavType.IntType
-                        defaultValue = -1
-                    }
-                )
-            ) { backStackEntry ->
-                selectedItemIndex.intValue = 1
-                showBottomNavigation = false
-                val id = backStackEntry.arguments?.getInt("id") ?: -1
-                BookmarkDetailScreen(navController = navController, id = id)
             }
         }
     }

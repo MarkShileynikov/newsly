@@ -19,6 +19,6 @@ interface NewsRepository {
 
     suspend fun deleteBookmark(title: String)
 
-    suspend fun fetchBookmark(id: Int) : Flow<NewsDetails>
+    suspend fun fetchBookmark(title: String) : Flow<NewsDetails>
 
 }

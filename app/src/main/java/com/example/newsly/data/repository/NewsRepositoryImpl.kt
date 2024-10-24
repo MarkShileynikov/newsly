@@ -108,8 +108,8 @@ class NewsRepositoryImpl @Inject constructor(
         bookmarkDao.deleteBookmark(title)
     }
 
-    override suspend fun fetchBookmark(id: Int): Flow<NewsDetails> = flow {
-        val bookmark = bookmarkDao.fetchBookmarkById(id)
+    override suspend fun fetchBookmark(title: String): Flow<NewsDetails> = flow {
+        val bookmark = bookmarkDao.fetchBookmarkByTitle(title)
         emit(bookmark)
     }.map { bookmark ->
         NewsDetails(

@@ -8,6 +8,7 @@ import com.example.newsly.domain.entity.NewsDetails
 import com.example.newsly.domain.usecase.AddBookmarkUseCase
 import com.example.newsly.domain.usecase.BookmarkCheckUseCase
 import com.example.newsly.domain.usecase.DeleteBookmarkUseCase
+import com.example.newsly.domain.usecase.FetchBookmarkUseCase
 import com.example.newsly.domain.usecase.FetchFullNewsUseCase
 import com.example.newsly.presentation.util.ViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,6 +28,7 @@ class NewsDetailViewModel @Inject constructor(
     private val addBookmarkUseCase: AddBookmarkUseCase,
     private val bookmarkCheckUseCase: BookmarkCheckUseCase,
     private val deleteBookmarkUseCase: DeleteBookmarkUseCase,
+    private val fetchBookmarkUseCase: FetchBookmarkUseCase
 ) : ViewModel() {
 
     private val _viewState = MutableStateFlow<ViewState<NewsDetails>>(ViewState.Loading)
@@ -35,7 +37,20 @@ class NewsDetailViewModel @Inject constructor(
     private val _isBookmarkState = MutableStateFlow(false)
     val isBookmarkState : StateFlow<Boolean> = _isBookmarkState
 
+
     fun getNewsDetails(category: String, title: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            checkIfBookmark(title)
+
+            if (category.isBlank() || _isBookmarkState.value) {
+                getNewsDetailsFromDb(title)
+            } else {
+                getNewsDetailsFromApi(category, title)
+            }
+        }
+    }
+
+    private fun getNewsDetailsFromApi(category: String, title: String) {
         viewModelScope.launch(Dispatchers.IO) {
             fetchFullNewsUseCase(category, title)
                 .onStart {
@@ -46,6 +61,19 @@ class NewsDetailViewModel @Inject constructor(
                 }
                 .collect { news ->
                     _viewState.value = ViewState.Success(news)
+                }
+        }
+    }
+
+    private fun getNewsDetailsFromDb(title: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            fetchBookmarkUseCase(title)
+                .onStart { _viewState.value = ViewState.Loading }
+                .catch {
+                    _viewState.value = ViewState.Failure(context.getString(R.string.error))
+                }
+                .collect {article ->
+                    _viewState.value = ViewState.Success(article)
                 }
         }
     }
@@ -67,8 +95,8 @@ class NewsDetailViewModel @Inject constructor(
         }
     }
 
-    fun checkIfBookmark(title: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun checkIfBookmark(title: String) {
+        try {
             bookmarkCheckUseCase(title)
                 .catch {
                     _isBookmarkState.value = false
@@ -76,6 +104,8 @@ class NewsDetailViewModel @Inject constructor(
                 .collect { isBookmark ->
                     _isBookmarkState.value = isBookmark
                 }
+        } catch (e: Exception) {
+            _isBookmarkState.value = false
         }
     }
 

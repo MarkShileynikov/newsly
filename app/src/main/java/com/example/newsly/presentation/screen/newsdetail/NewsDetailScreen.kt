@@ -67,7 +67,6 @@ fun NewsDetailScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getNewsDetails(category, title)
-        viewModel.checkIfBookmark(title)
     }
 
     Column(

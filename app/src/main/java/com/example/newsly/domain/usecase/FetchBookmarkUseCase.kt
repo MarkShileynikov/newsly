@@ -8,5 +8,5 @@ import javax.inject.Inject
 class FetchBookmarkUseCase @Inject constructor(
     private val newsRepository: NewsRepository
 ) {
-    suspend operator fun invoke(id: Int) : Flow<NewsDetails> = newsRepository.fetchBookmark(id)
+    suspend operator fun invoke(title: String) : Flow<NewsDetails> = newsRepository.fetchBookmark(title)
 }
