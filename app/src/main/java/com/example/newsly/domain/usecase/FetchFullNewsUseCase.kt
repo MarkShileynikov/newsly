@@ -5,8 +5,6 @@ import com.example.newsly.domain.repository.NewsRepository
 import com.example.newsly.domain.util.Event
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 class FetchFullNewsUseCase @Inject constructor(
@@ -20,7 +18,7 @@ class FetchFullNewsUseCase @Inject constructor(
             is Event.Success -> {
                 val article = event.data[0]
                 val date = article.publicationDate
-                val formattedDate = OffsetDateTime.parse(date).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                val formattedDate = parseDate(date)
                 val content = article.content
                 emit(
                     article.copy(
@@ -33,5 +31,16 @@ class FetchFullNewsUseCase @Inject constructor(
                 throw Exception(event.exception)
             }
         }
+    }
+
+    private fun parseDate(date: String): String {
+        val datePart = date.split("T")[0]
+
+        val dateComponents = datePart.split("-")
+        val year = dateComponents[0]
+        val month = dateComponents[1]
+        val day = dateComponents[2]
+
+        return "$day.$month.$year"
     }
 }

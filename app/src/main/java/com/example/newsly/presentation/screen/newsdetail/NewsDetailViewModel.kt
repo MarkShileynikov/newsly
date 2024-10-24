@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsly.R
-import com.example.newsly.domain.entity.Bookmark
 import com.example.newsly.domain.entity.NewsDetails
 import com.example.newsly.domain.usecase.AddBookmarkUseCase
 import com.example.newsly.domain.usecase.BookmarkCheckUseCase
