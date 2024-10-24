@@ -7,23 +7,31 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 
-data class BottomNavigationItem(
+class BottomNavigationItem(
+    val index: Int,
     val screen: String,
     val unselectedIcon: ImageVector,
     val selectedIcon: ImageVector
-)
+) {
+    companion object {
+        fun provideNewsItem() : BottomNavigationItem {
+            return BottomNavigationItem(
+                index = 0,
+                screen = "news",
+                unselectedIcon = Icons.Outlined.Home,
+                selectedIcon = Icons.Filled.Home
+            )
+        }
 
-fun provideItems() : List<BottomNavigationItem> {
-    return listOf(
-        BottomNavigationItem(
-            screen = "home",
-            unselectedIcon = Icons.Outlined.Home,
-            selectedIcon = Icons.Filled.Home
-        ),
-        BottomNavigationItem(
-            screen = "bookmarks",
-            unselectedIcon = Icons.Outlined.FavoriteBorder,
-            selectedIcon = Icons.Filled.Favorite
-        ),
-    )
+        fun provideBookmarkItem() : BottomNavigationItem {
+            return BottomNavigationItem(
+                index = 1,
+                screen = "bookmarks",
+                unselectedIcon = Icons.Outlined.FavoriteBorder,
+                selectedIcon = Icons.Filled.Favorite
+            )
+        }
+    }
 }
+
+

@@ -35,5 +35,4 @@ fun FullNewsResponse.toNewsDetails(context: Context): List<NewsDetails> {
             description = article.description ?: ""
         )
     }
-
 }

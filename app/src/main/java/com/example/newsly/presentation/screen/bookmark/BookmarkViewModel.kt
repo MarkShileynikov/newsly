@@ -26,11 +26,7 @@ class BookmarkViewModel @Inject constructor(
     private val _viewState = MutableStateFlow<ViewState<List<Bookmark>>>(ViewState.Loading)
     val viewState: StateFlow<ViewState<List<Bookmark>>> = _viewState
 
-    init {
-        getBookmarks()
-    }
-
-    private fun getBookmarks() {
+    fun getBookmarks() {
         viewModelScope.launch(Dispatchers.IO) {
             fetchAllBookmarksUseCase()
                 .onStart {

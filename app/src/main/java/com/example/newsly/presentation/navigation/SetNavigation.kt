@@ -27,7 +27,7 @@ fun SetNavigation() {
     var showBottomNavigation by rememberSaveable {
         mutableStateOf(true)
     }
-    var selectedItemIndex = rememberSaveable {
+    val selectedItemIndex = rememberSaveable {
         mutableIntStateOf(0)
     }
 
@@ -42,9 +42,9 @@ fun SetNavigation() {
     ) { innerPadding ->
         NavHost(navController = navController,
             route = "root",
-            startDestination = "home"
+            startDestination = "news"
         ) {
-            composable("home") {
+            composable("news") {
                 showBottomNavigation = true
                 Column(
                     modifier = Modifier
@@ -98,5 +98,4 @@ fun SetNavigation() {
             }
         }
     }
-
 }

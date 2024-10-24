@@ -34,5 +34,4 @@ class FetchFullNewsUseCase @Inject constructor(
             }
         }
     }
-
 }

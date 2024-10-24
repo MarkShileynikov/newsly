@@ -26,6 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,6 +60,10 @@ fun NewsDetailScreen(
     val viewState by viewModel.viewState.collectAsState()
 
     val isBookmark by viewModel.isBookmarkState.collectAsState()
+
+    var isClickable by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getNewsDetails(category, title)
@@ -105,10 +112,8 @@ fun NewsDetailScreen(
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        if (!isBookmark && viewState is ViewState.Success) {
-                            viewModel.addBookMark((viewState as ViewState.Success<NewsDetails>).data)
-                        } else {
-                            viewModel.deleteBookmark(title)
+                        if (isClickable && viewState is ViewState.Success) {
+                            viewModel.addOrDeleteBookmark((viewState as ViewState.Success<NewsDetails>).data)
                         }
                     }
             )
@@ -146,6 +151,7 @@ fun NewsDetailScreen(
             }
             is ViewState.Success -> {
                 val news = (viewState as ViewState.Success<NewsDetails>).data
+                isClickable = true
 
                 Text(
                     text = title,

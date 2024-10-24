@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsly.R
+import com.example.newsly.domain.entity.Bookmark
 import com.example.newsly.domain.entity.NewsDetails
 import com.example.newsly.domain.usecase.AddBookmarkUseCase
 import com.example.newsly.domain.usecase.BookmarkCheckUseCase
@@ -50,7 +51,17 @@ class NewsDetailViewModel @Inject constructor(
         }
     }
 
-    fun addBookMark(news: NewsDetails) {
+    fun addOrDeleteBookmark(news: NewsDetails) {
+        if (isBookmarkState.value) {
+            deleteBookmark(news.title)
+            _isBookmarkState.value = false
+        } else {
+            addBookMark(news)
+            _isBookmarkState.value = true
+        }
+    }
+
+    private fun addBookMark(news: NewsDetails) {
         _isBookmarkState.value = true
         viewModelScope.launch(Dispatchers.IO) {
             addBookmarkUseCase(news)
@@ -69,7 +80,7 @@ class NewsDetailViewModel @Inject constructor(
         }
     }
 
-    fun deleteBookmark(title: String) {
+    private fun deleteBookmark(title: String) {
         _isBookmarkState.value = false
         viewModelScope.launch {
             deleteBookmarkUseCase(title)

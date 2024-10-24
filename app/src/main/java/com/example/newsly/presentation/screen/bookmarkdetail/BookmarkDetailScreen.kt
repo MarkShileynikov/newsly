@@ -59,8 +59,10 @@ fun BookmarkDetailScreen(
     val viewModel : BookmarkDetailViewModel = hiltViewModel()
     val viewState by viewModel.viewState.collectAsState()
 
-    var isBookmark by rememberSaveable {
-        mutableStateOf(true)
+    val isBookmark by viewModel.isBookmark.collectAsState()
+
+    var isClickable by rememberSaveable {
+        mutableStateOf(false)
     }
 
     LaunchedEffect(Unit) {
@@ -68,7 +70,7 @@ fun BookmarkDetailScreen(
     }
 
     BackHandler {
-        navController.navigate("bookmarks")
+        navController.popBackStack()
     }
 
     Column(
@@ -86,7 +88,7 @@ fun BookmarkDetailScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.clickable {
-                    navController.navigate("bookmarks")
+                    navController.popBackStack()
                 }
             ) {
                 Icon(
@@ -113,12 +115,8 @@ fun BookmarkDetailScreen(
                 modifier = Modifier
                     .size(28.dp)
                     .clickable {
-                        if (!isBookmark && viewState is ViewState.Success) {
-                            isBookmark = true
-                            viewModel.addBookMark((viewState as ViewState.Success<NewsDetails>).data)
-                        } else {
-                            isBookmark = false
-                            viewModel.deleteBookmark((viewState as ViewState.Success<NewsDetails>).data.title)
+                        if (isClickable && viewState is ViewState.Success) {
+                            viewModel.addOrDeleteBookmark((viewState as ViewState.Success<NewsDetails>).data)
                         }
                     }
             )
@@ -156,6 +154,7 @@ fun BookmarkDetailScreen(
             }
             is ViewState.Success -> {
                 val news = (viewState as ViewState.Success<NewsDetails>).data
+                isClickable = true
 
                 Text(
                     text = news.title,

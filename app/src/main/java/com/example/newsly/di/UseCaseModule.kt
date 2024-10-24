@@ -51,5 +51,4 @@ object UseCaseModule {
     fun provideFetchBookmarkUseCase(repository: NewsRepository): FetchBookmarkUseCase {
         return FetchBookmarkUseCase(repository)
     }
-
 }

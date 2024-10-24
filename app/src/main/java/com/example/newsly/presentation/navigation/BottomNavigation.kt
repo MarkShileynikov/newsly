@@ -1,6 +1,10 @@
 package com.example.newsly.presentation.navigation
 
-import android.annotation.SuppressLint
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -8,31 +12,55 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.navigation.NavController
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun BottomNavigation(
     navController: NavController,
     selectedItemIndex: MutableIntState
 ) {
-    val items = provideItems()
+
+    val newsItem = BottomNavigationItem.provideNewsItem()
+    val bookmarkItem = BottomNavigationItem.provideBookmarkItem()
+
     NavigationBar {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                selected = selectedItemIndex.intValue == index,
-                onClick = {
-                    selectedItemIndex.intValue = index
-                    navController.navigate(item.screen)
-                },
-                icon = {
-                    Icon(imageVector = if (index == selectedItemIndex.intValue) {
-                        item.selectedIcon
-                    } else {
-                        item.unselectedIcon
-                    },
-                        contentDescription = item.screen
-                    )
+        NavigationBarItem(
+            selected = newsItem.index == selectedItemIndex.intValue,
+            onClick = {
+                if (selectedItemIndex.intValue != newsItem.index) {
+                    selectedItemIndex.intValue = newsItem.index
+                    navController.navigate(newsItem.screen) {
+                        popUpTo(bookmarkItem.screen) { inclusive = true }
+                    }
                 }
-            )
-        }
+            },
+            icon = {
+                Icon(imageVector = if (newsItem.index == selectedItemIndex.intValue) {
+                    newsItem.selectedIcon
+                } else {
+                    newsItem.unselectedIcon
+                },
+                    contentDescription = newsItem.screen
+                )
+            }
+        )
+        NavigationBarItem(
+            selected = bookmarkItem.index == selectedItemIndex.intValue,
+            onClick = {
+                if (selectedItemIndex.intValue != bookmarkItem.index) {
+                    selectedItemIndex.intValue = bookmarkItem.index
+                    navController.navigate(bookmarkItem.screen) {
+                        popUpTo(newsItem.screen) { inclusive = true }
+                    }
+                }
+            },
+            icon = {
+                Icon(imageVector = if (selectedItemIndex.intValue == bookmarkItem.index) {
+                    bookmarkItem.selectedIcon
+                } else {
+                    bookmarkItem.unselectedIcon
+                },
+                    contentDescription = bookmarkItem.screen
+                )
+            }
+        )
     }
 }
