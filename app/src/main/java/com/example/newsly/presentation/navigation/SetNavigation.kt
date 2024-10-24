@@ -42,9 +42,9 @@ fun SetNavigation() {
     ) { innerPadding ->
         NavHost(navController = navController,
             route = "root",
-            startDestination = "home"
+            startDestination = "news"
         ) {
-            composable("home") {
+            composable("news") {
                 showBottomNavigation = true
                 Column(
                     modifier = Modifier
